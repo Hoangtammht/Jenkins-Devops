@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.WeatherAppBackEnd.dao.WeatherMapper">
+
+    <resultMap id="WeatherResultMap" type="com.example.WeatherAppBackEnd.domain.ResponseWeatherData">
+        <result property="weather_id" column="weather_id" />
+        <result property="weather_name" column="weather_name" />
+        <result property="location" column="location" />
+        <result property="min" column="min" />
+        <result property="max" column="max" />
+        <result property="temp" column="temp" />
+        <result property="code" column="code" />
+    </resultMap>
+
+    <select id="getInformationByLocation" resultMap="WeatherResultMap">
+<!--        <bind name="pattern" value="'%' + location + '%'" />-->
+        SELECT
+            weather_id,
+            weather_name,
+            location,
+            min,
+            max,
+            temp,
+            code
+        FROM Weather Where location = #{location};
+    </select>
+
+</mapper>

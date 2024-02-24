@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mysql8-container:
+    image: mysql:8.0.36
+    container_name: mysql8-container
+    restart: always
+    ports:
+      - "3307:3306"
+    networks:
+      - databases
+    environment:
+      MYSQL_ROOT_PASSWORD: Hoangtam39
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: WeatherProject
+    volumes:
+      - ./sql/weatherproject.sql:/docker-entrypoint-initdb.d/init-script.sql
+
+  phpmyadmin8-container:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin8-container
+    restart: always
+    depends_on:
+      - mysql8-container
+    ports:
+      - "8088:80"
+    environment:
+      PMA_HOST: mysql8-container #phpMyAdmin Host
+    networks:
+      - databases
+
+  redis-container:
+    image: docker.io/redis:7.2.3
+    container_name: redis-container
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - databases
+
+  weather-spring-container:
+    container_name: weather-spring-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql8-container:3306/WeatherProject
+      MYSQL_ROOT_PASSWORD: Hoangtam39
+    depends_on:
+      - mysql8-container
+    networks:
+      - databases
+
+
+networks:
+  databases:
